@@ -1,14 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import SearchBar from './SearchBar'
 import Logout from './Logout.jsx'
 import Conversations from './Conversations'
+import ConversationState from '../Context/Conversations/conversationContext.js'
 
 const Sidebar = () => {
+    const context = useContext(ConversationState);
+    const { conversations } = context;
+
     return <>
-        <div className='border-r border-slate-500 p-4 flex-col'>
+        <div className='border-r border-slate-500 p-4 flex-col overflow-auto'>
             <SearchBar />
             <div className="divider divider-neutral px-3"></div>
-            <Conversations />
+            <Conversations conversations={conversations} />
             <Logout />
         </div>
     </>

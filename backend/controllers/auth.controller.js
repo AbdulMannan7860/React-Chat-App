@@ -1,15 +1,17 @@
-import User from '../models/user.model.js'
-import bcrypt from 'bcrypt'
-import generateTokenAndSetCookie from '../utils/generateToken.js'
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import User from '../models/user.model.js';
+import generateTokenAndSetCookie from '../utils/generateToken.js';
 
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS) || 10;
 
 const addSaltAndPepper = async (password) => {
     const salt = bcrypt.genSaltSync(SALT_ROUNDS);
-    const pepper = process.env.PEPPER || 'default_pepper'; // Ensure PEPPER is a string
+    const pepper = process.env.PEPPER || 'default_pepper';
     const hashedPassword = bcrypt.hashSync(password + pepper, salt);
     return hashedPassword;
-}
+};
+
 export const signup = async (req, res) => {
     try {
         const { fullName, userName, password, confirmPassword, gender } = req.body;
@@ -23,30 +25,33 @@ export const signup = async (req, res) => {
 
         const hashedPassword = await addSaltAndPepper(password);
 
-        const boyProfilePic = `https://avatar.iran.liara.run/public/boy=${userName}`;
-        const girlProfilePic = `https://avatar.iran.liara.run/public/girl=${userName}`;
+        const profilePic = gender === 'Male'
+            ? `https://avatar.iran.liara.run/public/boy?username=${userName}`
+            : `https://avatar.iran.liara.run/public/girl?username=${userName}`;
 
         const newUser = new User({
             fullName,
             userName,
             password: hashedPassword,
             gender,
-            profilePic: gender === 'Male' ? boyProfilePic : girlProfilePic
+            profilePic,
         });
 
         await newUser.save();
+
         generateTokenAndSetCookie(newUser._id, res);
+
         res.status(201).json({
             _id: newUser._id,
             fullName: newUser.fullName,
             userName: newUser.userName,
-            profilePic: newUser.profilePic
+            profilePic: newUser.profilePic,
         });
     } catch (error) {
         console.error(`Error in Signup Controller: ${error}`);
         res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
 export const login = async (req, res) => {
     try {
@@ -62,26 +67,27 @@ export const login = async (req, res) => {
         if (!isPasswordCorrect) {
             return res.status(400).json({ message: 'Incorrect password' });
         }
+
         generateTokenAndSetCookie(user._id, res);
+
         res.status(200).json({
             _id: user._id,
             fullName: user.fullName,
             userName: user.userName,
-            profilePic: user.profilePic
+            profilePic: user.profilePic,
         });
-
     } catch (error) {
         console.error(`Error in Login Controller: ${error}`);
         res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
 export const logout = async (req, res) => {
     try {
-        res.cookie('jwt', '', { maxAge: 0 })
-        res.status(200).send('Logout Sccessfully')
+        res.cookie('jwt', '', { maxAge: 0 });
+        res.status(200).json({ message: 'Logout Successfully' });
     } catch (error) {
-        console.error(`Error in Signup Controller: ${error}`)
-        console.log(error)
+        console.error(`Error in Logout Controller: ${error}`);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};

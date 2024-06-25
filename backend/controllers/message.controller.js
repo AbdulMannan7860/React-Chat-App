@@ -1,5 +1,6 @@
 import Conversation from '../models/conversation.modal.js'
 import Message from '../models/message.modal.js'
+import { getReceiverId, io } from '../socket/sockets.js';
 
 export const sendMessage = async (req, res) => {
     try {
@@ -30,6 +31,13 @@ export const sendMessage = async (req, res) => {
 
         //  This will run in parallel
         await Promise.all([conversation.save(), newMessage.save()]);
+
+        // SOCKET IO FUNCTIONALITY WILL BE IMPLEMENTED HERE
+
+        const receiverSocketId = getReceiverId(receiverId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('new-message', newMessage);
+        }
 
         res.status(201).json(newMessage);
     } catch (error) {

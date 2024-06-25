@@ -1,9 +1,10 @@
-import express from 'express'
-import fetchUser from '../middleware/fetchUser.js'
+import express from 'express';
+import fetchUser from '../middleware/fetchUser.js';
 import { getUsersForSidebar } from '../controllers/users.controller.js';
 
-const router = express.Router()
+const router = express.Router();
 
-router.get("/:id", fetchUser, getUsersForSidebar)
+router.get('/', fetchUser, getUsersForSidebar);
 
-export default router
+export default router;
+
