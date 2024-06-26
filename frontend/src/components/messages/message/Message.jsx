@@ -10,6 +10,7 @@ const Message = ({ message }) => {
     const chatClassName = fromMe ? "chat-end" : "chat-start";
     const profilePic = fromMe ? authUser.profilePic : selectedConversation?.profilePic;
     const chatBubble = fromMe ? "bg-green-500" : "";
+    const shakeClass = message.shouldShake ? "shake" : "";
     const extractTime = (dateString) => {
         const date = new Date(dateString);
         const hours = padZero(date.getHours());
@@ -31,7 +32,7 @@ const Message = ({ message }) => {
                     />
                 </div>
             </div>
-            <div className={`chat-bubble text-white ${chatBubble} pb-2`}>
+            <div className={`chat-bubble text-white ${chatBubble} ${shakeClass} pb-2`}>
                 {message.message}
             </div>
             <div className="chat-footer opacity-50 text-white text-xs flex gap-1 items-center">

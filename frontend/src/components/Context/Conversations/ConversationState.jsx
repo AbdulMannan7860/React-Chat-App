@@ -7,8 +7,6 @@ const ConversationState = (props) => {
     const { children, authUser } = props
     const host = import.meta.env.VITE_REACT_APP_HOST;
     const [conversations, setConversations] = useState([]);
-    // const user = JSON.parse(localStorage.getItem('chat-user'));
-    // const jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjczZjRjYWRjNzg4MTBjZTNkNWFiOTciLCJpYXQiOjE3MTg5Njk1MDEsImV4cCI6MTcyMDI2NTUwMX0.QV382UlG-WcylLLVt4bwQZRqPe8FCHPF96VbewG3yIU"
     const { messages, setMessages, selectedConversation } = useConversation();
     const [loading, setLoading] = useState(false);
     const getConversation = async () => {

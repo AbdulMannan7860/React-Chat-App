@@ -36,6 +36,7 @@ const SocketState = (props) => {
 
     useEffect(() => {
         socket?.on("new-message", (data) => {
+            data.shouldShake = true;
             setMessages([...messages, data]);
         })
 
